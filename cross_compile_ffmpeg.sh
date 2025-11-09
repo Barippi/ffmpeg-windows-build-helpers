@@ -1516,12 +1516,11 @@ build_libbluray() {
       if [[ ! -f src/udfread.c.bak ]]; then
         sed -i.bak "/WIN32$/,+4d" src/udfread.c # Fix WinXP incompatibility.
       fi
-      if [[ ! -f src/udfread-version.h ]]; then
-        generic_configure # Generate 'udfread-version.h', or building Libbluray fails otherwise.
-      fi
     cd ../..
-    generic_configure "--disable-examples --disable-bdjava-jar"
-    do_make_and_make_install "CPPFLAGS=\"-Ddec_init=libbr_dec_init\""
+    cp ../../cross.txt .
+     meson setup build --cross-file=cross.txt --prefix=/home/barippi/ffmpeg-windows-build-helpers/sandbox/cross_compilers/mingw-w64-x86_64/x86_64-w64-mingw32
+     ninja -C build
+     ninja -C build install
   cd ..
 }
 
@@ -1547,7 +1546,7 @@ build_libflite() {
   # download_and_unpack_file http://www.festvox.org/flite/packed/flite-2.1/flite-2.1-release.tar.bz2
   # original link is not working so using a substitute
   # from a trusted source
-  download_and_unpack_file http://deb.debian.org/debian/pool/main/f/flite/flite_2.1-release.orig.tar.bz2 flite-2.1-release
+  download_and_unpack_file https://ftp.yz.yamagata-u.ac.jp/pub/linux/ubuntu-archive/pool/universe/f/flite/flite_2.1-release.orig.tar.bz2 flite-2.1-release
   cd flite-2.1-release
     apply_patch file://$patch_dir/flite-2.1.0_mingw-w64-fixes.patch
     if [[ ! -f main/Makefile.bak ]]; then
@@ -1567,9 +1566,9 @@ build_libsnappy() {
 }
 
 build_vamp_plugin() {
-  download_and_unpack_file https://code.soundsoftware.ac.uk/attachments/download/2691/vamp-plugin-sdk-2.10.0.tar.gz
-  cd vamp-plugin-sdk-2.10.0
-    apply_patch file://$patch_dir/vamp-plugin-sdk-2.10_static-lib.diff
+  download_and_unpack_file https://github.com/vamp-plugins/vamp-plugin-sdk/archive/refs/tags/vamp-plugin-sdk-v2.10.tar.gz
+  cd vamp-plugin-sdk-vamp-plugin-sdk-v2.10
+    apply_patch file://$patch_dir/vamp-plugin-sdk-vamp-plugin-sdk-v2.10_static-lib.diff
     if [[ $compiler_flavors != "native" && ! -f src/vamp-sdk/PluginAdapter.cpp.bak ]]; then
       sed -i.bak "s/#include <mutex>/#include <mingw.mutex.h>/" src/vamp-sdk/PluginAdapter.cpp
     fi
@@ -1614,8 +1613,8 @@ build_librubberband() {
 build_frei0r() {
   #do_git_checkout https://github.com/dyne/frei0r.git
   #cd frei0r_git
-  download_and_unpack_file https://github.com/dyne/frei0r/archive/refs/tags/v2.3.0.tar.gz frei0r-2.3.0
-  cd frei0r-2.3.0
+  download_and_unpack_file https://github.com/dyne/frei0r/archive/refs/tags/v2.5.0.tar.gz frei0r-2.5.0
+  cd frei0r-2.5.0
     sed -i.bak 's/-arch i386//' CMakeLists.txt # OS X https://github.com/dyne/frei0r/issues/64
     do_cmake_and_install "-DWITHOUT_OPENCV=1" # XXX could look at this more...
 
