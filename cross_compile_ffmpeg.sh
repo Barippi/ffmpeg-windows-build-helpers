@@ -1517,7 +1517,7 @@ build_libbluray() {
         sed -i.bak "/WIN32$/,+4d" src/udfread.c # Fix WinXP incompatibility.
       fi
     cd ../..
-    cp ../../cross.txt .
+    cp ../../../cross.txt .
      meson setup build --cross-file=cross.txt --prefix=/home/barippi/ffmpeg-windows-build-helpers/sandbox/cross_compilers/mingw-w64-x86_64/x86_64-w64-mingw32
      ninja -C build
      ninja -C build install
